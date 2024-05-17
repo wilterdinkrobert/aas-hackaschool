@@ -42,6 +42,8 @@ services:
     volumes:
       - ./basyx/aas-env.properties:/application/application.properties
       - ./basyx/aas:/application/aas
+    environment:
+      BASYX_EXTERNALURL: "http://${PUBLIC_IP}:8081"
     ports:
       - 8081:8081
     depends_on:
