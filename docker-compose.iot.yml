@@ -42,9 +42,6 @@ services:
       - LINE=Line
       - MQTT_URL=mqtt://mqtt:1884
       - MQTT_PORT=1884
-    depends_on:
-      mqtt:
-        condition: service_healthy
 
 volumes:
   thingsboard-data-storage:
