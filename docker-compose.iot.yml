@@ -1,0 +1,54 @@
+version: "3.9"
+
+networks:
+  backend:
+    external:
+      name: ah-backend
+
+services:
+  thingsboard:
+    restart: always
+    image: "thingsboard/tb-postgres:latest"
+    ports:
+      - "8888:9090"
+#      - "1883:1883"
+#      - "7070:7070"
+#      - "5683-5688:5683-5688/udp"
+    environment:
+      TB_QUEUE_TYPE: in-memory
+    volumes:
+      - thingsboard-data-storage:/data
+      - thingsboard-log-storage:/var/log/thingsboard
+
+  thingsboard-gateway:
+    image: tb_gateway_hackathon:latest
+    restart: always
+    environment:
+      - TB_GW_HOST=thingsboard
+      - TB_GW_PORT=1883
+      - TB_GW_ACCESS_TOKEN=1234
+      - TB_GW_LOGS_PATH=/thingsboard_gateway/logs
+    volumes:
+      - thingsboard-gateway-config:/thingsboard_gateway/config
+      - thingsboard-gateway-logs:/thingsboard_gateway/logs
+      - thingsboard-gateway-extensions:/thingsboard_gateway/extensions
+
+  packml-simulator:
+    image: spruiktec/packml-simulator:latest
+    restart: always
+    environment:
+      - SITE=Site
+      - AREA=Area
+      - LINE=Line
+      - MQTT_URL=mqtt://mqtt:1884
+      - MQTT_PORT=1884
+    depends_on:
+      mqtt:
+        condition: service_healthy
+
+volumes:
+  thingsboard-data-storage:
+  thingsboard-log-storage:
+  thingsboard-gateway-config:
+  thingsboard-gateway-logs:
+  thingsboard-gateway-extensions:
