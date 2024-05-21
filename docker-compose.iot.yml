@@ -2,13 +2,13 @@ version: "3.9"
 
 networks:
   backend:
-    external:
-      name: ah-backend
+    external: true
+    name: ah-backend
 
 services:
   thingsboard:
     restart: always
-    image: "thingsboard/tb-postgres:latest"
+    image: "thingsboard/tb-postgres:3.6.3"
     ports:
       - "8888:9090"
 #      - "1883:1883"
@@ -21,13 +21,14 @@ services:
       - thingsboard-log-storage:/var/log/thingsboard
 
   thingsboard-gateway:
-    image: tb_gateway_hackathon:latest
+    image: wilterdinktno/tb-gateway-hackathon:latest
     restart: always
     environment:
       - TB_GW_HOST=thingsboard
       - TB_GW_PORT=1883
       - TB_GW_ACCESS_TOKEN=1234
       - TB_GW_LOGS_PATH=/thingsboard_gateway/logs
+      - THINGSBOARD_HOST=thingsboard
     volumes:
       - thingsboard-gateway-config:/thingsboard_gateway/config
       - thingsboard-gateway-logs:/thingsboard_gateway/logs

@@ -2,8 +2,8 @@ version: "3.9"
 
 networks:
   backend:
-    external:
-      name: ah-backend
+    external: true
+    name: ah-backend
 
 services:
   mongo:
