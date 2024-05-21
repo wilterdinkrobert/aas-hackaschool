@@ -34,7 +34,7 @@ services:
       - thingsboard-gateway-extensions:/thingsboard_gateway/extensions
 
   packml-simulator:
-    image: spruiktec/packml-simulator:latest
+    image: wilterdinktno/packml-simulator:wrap-mqtt-message
     restart: always
     environment:
       - SITE=Site
