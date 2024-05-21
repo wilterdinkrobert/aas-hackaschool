@@ -26,8 +26,8 @@ services:
 
   mqtt:
     image: eclipse-mosquitto:2.0.15
-#    ports:
-#      - 1884:1884
+    ports:
+      - 1884:1884
     volumes:
       - ./mosquitto:/mosquitto/config
     healthcheck:

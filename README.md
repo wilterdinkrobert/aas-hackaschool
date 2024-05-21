@@ -62,8 +62,8 @@ The last remaining step is to upload the AASX describing the asset.
 1. Open Postman
 2. Select the `Upload AASX` POST call
 3. Navigate to the `Body` tab
-4. Select `form-data` and add a new key-value pair. Choose key `file`, select `File` from the dropdown and select the supplied AASX file `Spruik_AID.aasx`.
-5. Click `Send` and you should get `true` in the `Response` box.
+4. Select `form-data` and add a new key-value pair. For the key write `file`, select `File` from the dropdown and select the supplied AASX file `Spruik_AID.aasx`.
+5. Click `Send` and you should get `true` in the `Response` box. A blank response or 40X response usually points to trouble, please ask for help.
 
 Please check if the AAS and Submodels have been added correctly in the registries and if they can be accessed.
 Hint: Use the Postman collection and navigate in the JSON response.
