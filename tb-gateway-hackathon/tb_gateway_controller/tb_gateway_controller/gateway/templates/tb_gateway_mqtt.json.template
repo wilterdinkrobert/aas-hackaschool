@@ -1,0 +1,36 @@
+{
+  "broker": {
+    "name":"{{ name }}",
+    "host":"{{ connector.host }}",
+    "port":{{ connector.port }},
+    "security": {
+      "type": "anonymous"
+    }
+  },
+  "mapping": [
+    {% for topic in connector.topics -%}
+    {
+      "topicFilter": "{{ topic.topic_filter }}",
+      "converter": {
+        "type": "json",
+        "deviceNameJsonExpression": "{{ topic.device_name_expr }}",
+        "deviceTypeJsonExpression": "{{ topic.device_type_expr }}",
+        "timeout": 60000,
+        "timeseries": [
+          {% for ts in topic.timeseries -%}
+          {
+            "type": "{{ ts.type }}",
+            "key": "{{ ts.key }}",
+            "value": "{{ ts.value }}"
+          }{% if not loop.last %},{% endif %}
+          {%- endfor %}
+        ]
+      }
+    }{% if not loop.last %},{% endif %}
+    {%- endfor %}
+  ],
+  "connectRequests": [],
+  "disconnectRequests": [],
+  "attributeRequests": [],
+  "attributeUpdates": []
+}

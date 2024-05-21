@@ -1,0 +1,27 @@
+# Choosing a build backend:
+# https://packaging.python.org/en/latest/tutorials/packaging-projects/#choosing-a-build-backend
+[build-system]
+# A list of packages that are needed to build your package:
+requires = ["setuptools"]  # REQUIRED if [build-system] table is used
+# The name of the Python object that frontends will use to perform the build:
+build-backend = "setuptools.build_meta"  # If not defined, then legacy behavior can happen.
+
+[project]
+name = "tb_gateway_controller"
+version = "0.1.0"
+dependencies = [ "aiohttp", "jinja2" ]
+requires-python = ">=3.8"
+
+[tool.black]
+line-length = 100
+skip-string-normalization = true
+target-versions = ["py38", "py39", "py310"]
+
+[tool.pylint.basic]
+disable = [
+    "missing-module-docstring",
+    "logging-fstring-interpolation"
+]
+
+[tool.setuptools.package-data]
+"tb_gateway_controller.gateway.templates" = ["*.template"]
