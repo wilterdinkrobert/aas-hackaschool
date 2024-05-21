@@ -1,0 +1,152 @@
+{
+	"info": {
+		"_postman_id": "a2883b8a-874a-4b25-b72f-d4e9c73877ba",
+		"name": "Asset Administration Shell hackaschool",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14123667"
+	},
+	"item": [
+		{
+			"name": "Inspect AAS registry",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{IP_ADDR}}:8082/shell-descriptors",
+					"protocol": "http",
+					"host": [
+						"{{IP_ADDR}}"
+					],
+					"port": "8082",
+					"path": [
+						"shell-descriptors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Inspect SM registry",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{IP_ADDR}}:8083/submodel-descriptors",
+					"protocol": "http",
+					"host": [
+						"{{IP_ADDR}}"
+					],
+					"port": "8083",
+					"path": [
+						"submodel-descriptors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Inspect AAS-env",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{IP_ADDR}}:8081/shells",
+					"protocol": "http",
+					"host": [
+						"{{IP_ADDR}}"
+					],
+					"port": "8081",
+					"path": [
+						"shells"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get AAS",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Upload AASX",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/robert/VM_share/Spruik_AID.aasx"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{IP_ADDR}}:8081/upload",
+					"protocol": "http",
+					"host": [
+						"{{IP_ADDR}}"
+					],
+					"port": "8081",
+					"path": [
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete AAS",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{IP_ADDR}}:8081/shells/aHR0cHM6Ly9leGFtcGxlLmNvbS9zcHJ1aWsvUGFja01MLU1RVFQtU2ltdWxhdG9y",
+					"protocol": "http",
+					"host": [
+						"{{IP_ADDR}}"
+					],
+					"port": "8081",
+					"path": [
+						"shells",
+						"aHR0cHM6Ly9leGFtcGxlLmNvbS9zcHJ1aWsvUGFja01MLU1RVFQtU2ltdWxhdG9y"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "IP_ADDR",
+			"value": "172.211.101.20"
+		}
+	]
+}
