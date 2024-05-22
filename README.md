@@ -79,6 +79,8 @@ Since the AAS is created using a static file the address still needs to be added
 5. In the third colomn change `localhost:1884` to `{PUBLIC_IP}:1884` and click the blue upload button to the right.
 6. Refresh the page and verify that the value remains `{PUBLIC_IP}:1884`
 
+In the end this step should be automatic. Can you think of a good way to achieve this?
+
 ## View new device on Thingsboard
 Now data from the asset should be collected by the gateway and transferred to Thingsboard.
 Open the Thingsboard web UI again and navigate to the devices to see if a new device was added.
@@ -91,4 +93,7 @@ To restart the PackML simulator you need to install `mosquitto` and can use the 
 Note: You might need to change the `-h` parameter to point to the broker.
 
 ## Acknowledgements
-This project is made possible by a contribution from the National Growth Fund program NXTGEN Hightech.
+* This project is made possible by a contribution from the National Growth Fund program [NXTGEN Hightech](https://nxtgenhightech.nl/).
+* [Spruik/PackML-MQTT-Simulator](https://github.com/Spruik/PackML-MQTT-Simulator/)
+* [BaSyx](https://github.com/eclipse-basyx/basyx-java-server-sdk)
+* [AAS web UI](https://github.com/eclipse-basyx/basyx-applications)
