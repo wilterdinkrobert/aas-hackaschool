@@ -77,3 +77,6 @@ To restart the PackML simulator you can use the following commands:
 2. Start (after reset) with `mosquitto_pub -h localhost -p 1884 -t "Site/Area/Line/Command/Start" -m 1`
 
 Note: You might need to change the `-h` parameter to point to the broker.
+
+## Acknowledgements
+This project is made possible by a contribution from the National Growth Fund program NXTGEN Hightech.
