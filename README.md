@@ -37,7 +37,7 @@ If you are unfamiliar with Docker, please stick to the suggested commands and as
 * Run `docker compose -f docker-compose.iot.yml --env-file default.env up -d`
 
 #### 2. Setup the gateway in Thingsboard
-1. Open the Thingsboard web UI on `http://{PUBLIC_IP}:8080`, use username `tenant@thingsboard.org` and password `tenant`.
+1. Open the Thingsboard web UI on `http://{PUBLIC_IP}:8888`, use username `tenant@thingsboard.org` and password `tenant`.
 2. Navigate `Entities` -> `Devices`
 3. Add a new device by clicking on the `+` in the top-right corner
 4. Use name `hackaschool-gateway` and toggle the `Is gateway` to 'on'.
@@ -62,17 +62,29 @@ The last remaining step is to upload the AASX describing the asset.
 1. Open Postman
 2. Select the `Upload AASX` POST call
 3. Navigate to the `Body` tab
-4. Select `form-data` and add a new key-value pair. For the key write `file`, select `File` from the dropdown and select the supplied AASX file `Spruik_AID.aasx`.
+4. Select `form-data` and add a new key-value pair. For the key write `file`, select `File` from the dropdown and select the supplied AASX file `Spruik_AID.aasx` which can be found in the `aasx` folder.
 5. Click `Send` and you should get `true` in the `Response` box. A blank response or 40X response usually points to trouble, please ask for help.
 
 Please check if the AAS and Submodels have been added correctly in the registries and if they can be accessed.
 Hint: Use the Postman collection and navigate in the JSON response.
 
+## Update the ip-address in AID submodel
+The AID specifies where the mqtt broker can be found, but this needs the public ip address used earlier.
+Since the AAS is created using a static file the address still needs to be added.
+
+1. Open the Basyx AAS UI on `http://localhost:8080`, Here you can inspect all you AASes availble.
+2. Click in the left column on `SpruikPackMLSimulator`
+3. Click in the second column on the arrow in frond of `AssetInterfaceDescription`.
+4. Follow the tree down untill you can click on at `AssetInterfaceDescription/MQTT/EndpointMetadata/base`
+5. In the third colomn change `localhost:1884` to `{PUBLIC_IP}:1884` and click the blue upload button to the right.
+6. Refresh the page and verify that the value remains `{PUBLIC_IP}:1884`
+
+## View new device on Thingsboard
 Now data from the asset should be collected by the gateway and transferred to Thingsboard.
 Open the Thingsboard web UI again and navigate to the devices to see if a new device was added.
 Does the device also have telemetry data?
 
-To restart the PackML simulator you can use the following commands:
+To restart the PackML simulator you need to install `mosquitto` and can use the following commands:
 1. Reset with mosquitto (MQTT client) `mosquitto_pub -h localhost -p 1884 -t "Site/Area/Line/Command/Reset" -m 1`
 2. Start (after reset) with `mosquitto_pub -h localhost -p 1884 -t "Site/Area/Line/Command/Start" -m 1`
 
