@@ -24,7 +24,7 @@ log = logging.getLogger("main")
 
 configs: Dict[str, AIDSubmodel] = {}
 config_writer = ConfigWriter()
-
+feature_assume_tsv_wrapper = False
 
 async def get_submodel_descriptors(session, aas_registry, sm_registry, aas_id):
     resolved_aas_url = await resolve_aas_endpoint_on_registry(session, aas_registry, aas_id)
@@ -47,6 +47,39 @@ async def scrape_asset_interface_descriptions(session, aas_registry, sm_registry
     return [AIDSubmodel.from_dict(sm) for sm in aid_submodels]
 
 
+def convert_to_timeseries(p, prefix_key=None, prefix_value=None, level=0) -> List[Timeseries]:
+    ts_key = f"{prefix_key}_{p.idShort}" if prefix_key is not None else p.idShort
+    if level == 0:
+        if len(p.properties) > 0:
+            ts_value = None
+        else:
+            if feature_assume_tsv_wrapper:
+                ts_value = "value"
+            else:
+                # Note: If the gateway complains about 'could not convert string to float' you either need to extend the AID model tree or change this AID property.type to string.
+                ts_value = "[:]"
+    else:
+        ts_value = f"{prefix_value}.{p.idShort}" if prefix_value is not None else p.idShort
+
+    ts_type = p.type if p.type != "number" else "float"
+
+    if p.type == "array":
+        # The gateway cannot deconstruct objects with array fields at the moment, hence store them in 1 string
+        return [Timeseries("string", ts_key, "${" + ts_value + "}")]
+    elif ts_type == "object":
+        timeseries = []
+        for p_child in p.properties:
+            timeseries.extend(convert_to_timeseries(p_child, ts_key, ts_value, level+1))
+        return timeseries
+    else:
+        assert len(p.properties) == 0
+        return [Timeseries(ts_type, ts_key, "${" + ts_value + "}")]
+
+
+def convert_to_topic(property, dnp):
+    return [MQTTTopic(property.forms.href, convert_to_timeseries(property), f"{dnp.ManufacturerName}-{dnp.ManufacturerProductType}-{dnp.SerialNumber}")]
+
+
 def convert_to_connectors(dnp: DigitalNameplateSubmodel, aid: AIDSubmodel) -> List[Connector]:
     connectors = []
     for interface in aid.interfaces:
@@ -55,12 +88,7 @@ def convert_to_connectors(dnp: DigitalNameplateSubmodel, aid: AIDSubmodel) -> Li
             url = urlparse(base if base.startswith("mqtt://") else f"mqtt://{base}")
             topics = []
             for property in interface.interactionMetadata.properties:
-                if len(property.properties) > 0:
-                    raise NotImplementedError("Nested properties are not supported yet")
-                ts_type = property.type
-                if property.type == "number":
-                    ts_type = "float"
-                topics.append(MQTTTopic(property.forms.href, [Timeseries(ts_type, property.idShort, "${value}")], f"{dnp.ManufacturerName}-{dnp.ManufacturerProductType}-{dnp.SerialNumber}"))
+                topics.extend(convert_to_topic(property, dnp))
             mqtt = MQTT(f"{url.hostname}", url.port, topics)
             connectors.append(Connector("mqtt", interface.idShort, mqtt))
         else:
@@ -90,6 +118,9 @@ async def restart_tb_gateway_service():
 
 
 async def main(args: Optional[argparse.Namespace]) -> None:
+    global feature_assume_tsv_wrapper
+    feature_assume_tsv_wrapper = args.feature_assume_tsv_wrapper
+
     async with aiohttp.ClientSession() as session:
         if not os.path.exists(args.gateway_config):
             os.mkdir(args.gateway_config)
@@ -103,7 +134,7 @@ async def main(args: Optional[argparse.Namespace]) -> None:
                 log.error(f"Exception: {type(e)}: {str(e)}")
                 if not isinstance(e, (ClientConnectorError, AASNotFoundError, AASAPIError, SubmodelNotFoundError)):
                     log.error(traceback.format_exc())
-            await asyncio.sleep(10)
+                await asyncio.sleep(10)
 
         while True:
             try:
@@ -148,6 +179,10 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--thingsboard-access-token', type=str, required=False, help="Thingsboard access token", default="1234"
+    )
+    # Makes the code backwards compatible with hackathon day version
+    parser.add_argument(
+        '--feature-assume-tsv-wrapper', type=bool, required=False, help="Assume values are wrapped in a standard {ts : <TIMESTAMP>, value: <VALUE>} json object", default=True
     )
 
     asyncio.run(main(parser.parse_args()))

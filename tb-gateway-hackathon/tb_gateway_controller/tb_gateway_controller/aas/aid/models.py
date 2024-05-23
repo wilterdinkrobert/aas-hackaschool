@@ -3,7 +3,7 @@ from enum import Enum
 from typing import List, Union, Dict
 
 from tb_gateway_controller.aas.models import SemanticId, get_property_value, get_property, matches_semantic_id_raw, \
-    matches_semantic_id
+    matches_semantic_id, has_property
 
 AID_SUBMODEL_SEMANTIC_ID = "https://admin-shell.io/idta/AssetInterfacesDescription/1/0/Submodel"
 
@@ -57,7 +57,7 @@ class Property:
                    title=get_property_value(value, "https://www.w3.org/2019/wot/td#title"),
                    unit=get_property_value(value, "https://schema.org/unitCode"),
                    properties=[Property.from_dict(i) for i in get_property(value, "https://www.w3.org/2019/wot/json-schema#properties").get("value", [])],
-                   forms=Forms.from_dict(get_property(value, "https://www.w3.org/2019/wot/td#hasForm").get("value", None)))
+                   forms=Forms.from_dict(get_property(value, "https://www.w3.org/2019/wot/td#hasForm").get("value", None)) if has_property(value, "https://www.w3.org/2019/wot/td#hasForm") else None)
 
 
 @dataclass

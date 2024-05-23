@@ -44,6 +44,11 @@ def get_property(smc: List[Dict], property_semantic_id: str) -> Dict:
     return next((x for x in smc if matches_semantic_id_raw(x, property_semantic_id)), {})
 
 
+def has_property(smc: List[Dict], property_semantic_id: str) -> bool:
+    # FIXME: Hackish
+    return get_property(smc, property_semantic_id) != {}
+
+
 def get_property_value(smc: List[Dict], property_semantic_id: str, default: Union[str, None] = None) -> Union[str, None]:
     property = get_property(smc, property_semantic_id)
     value = property.get("value", default)
